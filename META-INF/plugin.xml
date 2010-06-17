@@ -1,0 +1,30 @@
+<idea-plugin version="2">
+    <name>Bugzilla task provider</name>
+    <id>org.bugzilla.tasks</id>
+    <description>Allows for access of your bugzilla tasks.</description>
+
+    <depends>com.intellij.tasks</depends>
+
+    <version>0.1</version>
+    <vendor>Freshly Baked Apps</vendor>
+    <idea-version since-build="8000"/>
+
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
+
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
+
+    <actions>
+        <!-- Add your actions here -->
+    </actions>
+
+    <extensionPoints>
+    </extensionPoints>
+
+    <extensions xmlns="com.intellij" defaultExtensionNs="com.intellij">
+        <tasks.repositoryType implementation="org.bugzilla.tasks.BugzillaRepositoryType"/>
+    </extensions>
+</idea-plugin>
