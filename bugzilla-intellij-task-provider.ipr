@@ -63,7 +63,7 @@
       <module fileurl="file://$PROJECT_DIR$/bugzilla-intellij-task-provider.iml" filepath="$PROJECT_DIR$/bugzilla-intellij-task-provider.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_5" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-95.66" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-95.66" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="SvnBranchConfigurationManager">
@@ -95,6 +95,38 @@
     <library name="tasksapi">
       <CLASSES>
         <root url="jar://$APPLICATION_HOME_DIR$/plugins/tasks/lib/tasks-api.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="tagsoup">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/tagsoup-1.2.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="http-client">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/httpcore-4.0.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/httpmime-4.0.1.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/httpclient-4.0.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="commons-logging">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/commons-logging-1.1.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="xerces">
+      <CLASSES>
+        <root url="jar://$PROJECT_DIR$/lib/xercesImpl.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xml-apis.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xerces.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

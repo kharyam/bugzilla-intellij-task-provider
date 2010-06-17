@@ -44,7 +44,6 @@ public class BugzillaRepositoryType extends BaseRepositoryType {
             }
         };
         return new BaseRepositoryEditor<BugzillaTaskRepository>(project, (BugzillaTaskRepository)repository, myconsumer);
-
     }
 
     @NotNull

@@ -3,10 +3,10 @@ package org.bugzilla.tasks;
 import com.intellij.tasks.Task;
 import com.intellij.tasks.TaskRepositoryType;
 import com.intellij.tasks.impl.BaseRepository;
-import org.apache.xmlrpc.XmlRpcClient;
 import org.jetbrains.annotations.Nullable;
 
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
@@ -29,70 +29,53 @@ public class BugzillaTaskRepository extends BaseRepository {
     }
     public BugzillaTaskRepository(TaskRepositoryType type) {
         super(type);
-    }
-    
-    XmlRpcClient client = null;
 
-    private synchronized void buildClient() throws MalformedURLException {
-        if(client != null) {
-            return;
+    }
+    BugzillaCommunicator communicator;
+    BugzillaQueryBuilder queryBuilder;
+    AuthToken token ;
+    URI uri;
+
+    private synchronized void init() throws URISyntaxException {
+        URI uri = new URI(getUrl());
+        if(! uri.equals(this.uri)) {
+            // new uri. reset state. not sure if this is supposed to happen
+            communicator = null;
+            queryBuilder = null;
+            token = null;
         }
-        client = new XmlRpcClient(getUrl());
+
+        if(communicator == null) {
+            communicator = BugzillaImplFactory.getCommunicator(uri);
+        }
+        if(queryBuilder == null) {
+            queryBuilder = BugzillaImplFactory.getQueryBuilder(uri);
+        }
     }
 
     @Override
     public void testConnection() throws Exception {
-        buildClient();
-        Vector params = new Vector();
-        params.add(getUsername());
-        params.add(getPassword());
-        client.execute("login", params);
+        init();
+        token = communicator.login(getUsername(), getPassword(), new URI(getUrl()));
+        if(token == null) {
+            throw new Exception("Login failed for the specified username/password");
+        }
     }
 
     @Override
     public Task[] getIssues(@Nullable String query, int max, long since) throws Exception {
-        buildClient();
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("assigned_to", getUsername());
-        Vector v = new Vector();
-        v.add(map);
-        Vector result = (Vector) client.execute("get", v);
-        Task[] tasks =  toTasks((Vector) result.get(0));
-        if(tasks != null && tasks.length > 0) {
-            return tasks;
-        }
-        return null;
+        init();
+        return communicator.getIssues(this.token, this.queryBuilder.buildQuery(query));
     }
 
     @Override
     public Task findTask(String id) throws Exception {
-        buildClient();
-        Vector v = new Vector();
-        v.add(id);
-        Vector result = (Vector) client.execute("get", v);
-        Task[] tasks =  toTasks((Vector) result.get(0));
-        if(tasks != null && tasks.length > 0) {
-            return tasks[0];
-        }
-        return null;
-    }
-
-    private Task[] toTasks(Vector o) {
-        if(o == null) {
+        init();
+        Task[] tasks =  communicator.getIssues(this.token, this.queryBuilder.buildQueryForTaskId(id));
+        if(tasks.length != 1) {
             return null;
         }
-        Task [] result_list = new Task[o.size()];
-        for(int i = 0; i < o.size(); i++) {
-            BugzillaTask bt = new BugzillaTask();
-            HashMap map = (HashMap) o.get(i);
-            bt.setId(map.get("id").toString());
-            bt.setSummary((String) map.get("summary"));
-            bt.setCreated((Date)map.get("creation_time"));
-            bt.setIssue(true);
-            bt.setUpdated((Date) map.get("last_change_time"));
-            result_list[i] = bt;
-        }
-        return result_list;
+        return tasks[0];
     }
 
     @Override
@@ -107,6 +90,6 @@ public class BugzillaTaskRepository extends BaseRepository {
 
     @Override
     public String extractId(String taskName) {
-        return taskName.split(":")[0];
+        return taskName.split(":")[0];         // TODO: this should belong in a version specific impl...
     }
 }
