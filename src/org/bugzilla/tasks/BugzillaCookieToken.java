@@ -1,5 +1,7 @@
 package org.bugzilla.tasks;
 
+import org.apache.http.cookie.Cookie;
+
 /**
  * Created by IntelliJ IDEA.
  * User: nickhristov
@@ -8,13 +10,21 @@ package org.bugzilla.tasks;
  * To change this template use File | Settings | File Templates.
  */
 class BugzillaCookieToken extends AuthToken {
-    private String cookieContent;
+    public BugzillaCookieToken () {
 
-    public BugzillaCookieToken (String cookieContent) {
-        this.cookieContent = cookieContent;
+    }
+    Cookie[] cookies;
+
+    public Cookie[] getCookies() {
+        return cookies;
     }
 
-    public String getCookieContent() {
-        return cookieContent;
+    public void setCookies(Cookie[] cookies) {
+        this.cookies = cookies;
+    }
+
+    @Override
+    public org.apache.http.cookie.Cookie[] toCookies() {
+        return this.cookies;
     }
 }

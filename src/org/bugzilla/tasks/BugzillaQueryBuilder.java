@@ -8,6 +8,6 @@ package org.bugzilla.tasks;
  * To change this template use File | Settings | File Templates.
  */
 public interface BugzillaQueryBuilder {
-    public BugzillaQuery buildQuery(String intellijQuery);
+    public BugzillaQuery buildQuery(String intellijQuery, String username);
     public BugzillaQuery buildQueryForTaskId(String id);
 }

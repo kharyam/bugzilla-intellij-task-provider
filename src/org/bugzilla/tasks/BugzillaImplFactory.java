@@ -13,7 +13,7 @@ public class BugzillaImplFactory {
      * @return
      */
     public static final BugzillaCommunicator getCommunicator(URI uri) {
-        return new BugzillaV3HTTPCommunicator();
+        return new BugzillaV3CSVCommunicator(uri);
     }
 
     public static final BugzillaQueryBuilder getQueryBuilder(URI uri) {

@@ -25,5 +25,5 @@ public interface BugzillaCommunicator {
      */
     public AuthToken login(String username, String password) throws IOException, URISyntaxException;
 
-    public BugzillaTask[] getIssues(AuthToken token, BugzillaQuery query) throws IOException;
+    public BugzillaTask[] getIssues(AuthToken token, BugzillaQuery query) throws IOException, URISyntaxException;
 }

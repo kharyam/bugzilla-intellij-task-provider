@@ -20,14 +20,22 @@ public class BugzillaTask extends Task {
     String id;
     String summary;
     String description;
-    Comment[] comments;
+    Comment[] comments = new Comment[0];
     Icon icon;
-    TaskType type;
+    TaskType type = TaskType.BUG;
     Date updated;
     Date created;
     boolean isClosed;
     boolean isIssue;
     String issueURL;
+    String reporterName;
+    String reporterEmail;
+    String assignedTo;
+    String status;
+    String targetMilestone;
+    String version ;
+    String severity;
+    String priority;
 
     @NotNull
     @Override
@@ -38,7 +46,7 @@ public class BugzillaTask extends Task {
     @NotNull
     @Override
     public String getSummary() {
-        return summary;
+        return this.id + "@" + this.targetMilestone +"@" + this.priority + "@"+ this.severity + " " + this.description;
     }
 
     @Override
@@ -130,5 +138,69 @@ public class BugzillaTask extends Task {
 
     public void setIssueURL(String issueURL) {
         this.issueURL = issueURL;
+    }
+
+    public String getReporterName() {
+        return reporterName;
+    }
+
+    public void setReporterName(String reporterName) {
+        this.reporterName = reporterName;
+    }
+
+    public String getReporterEmail() {
+        return reporterEmail;
+    }
+
+    public void setReporterEmail(String reporterEmail) {
+        this.reporterEmail = reporterEmail;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getTargetMilestone() {
+        return targetMilestone;
+    }
+
+    public void setTargetMilestone(String targetMilestone) {
+        this.targetMilestone = targetMilestone;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }

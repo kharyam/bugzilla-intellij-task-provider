@@ -56,7 +56,7 @@ public class BugzillaTaskRepository extends BaseRepository {
     @Override
     public void testConnection() throws Exception {
         init();
-        token = communicator.login(getUsername(), getPassword(), new URI(getUrl()));
+        token = communicator.login(getUsername(), getPassword());
         if(token == null) {
             throw new Exception("Login failed for the specified username/password");
         }
@@ -65,12 +65,18 @@ public class BugzillaTaskRepository extends BaseRepository {
     @Override
     public Task[] getIssues(@Nullable String query, int max, long since) throws Exception {
         init();
-        return communicator.getIssues(this.token, this.queryBuilder.buildQuery(query));
+        if(this.token == null) {
+            token = communicator.login(getUsername(), getPassword());
+        }
+        return communicator.getIssues(this.token, this.queryBuilder.buildQuery(query,getUsername()));
     }
 
     @Override
     public Task findTask(String id) throws Exception {
         init();
+        if(this.token == null) {
+            token = communicator.login(getUsername(), getPassword());
+        }
         Task[] tasks =  communicator.getIssues(this.token, this.queryBuilder.buildQueryForTaskId(id));
         if(tasks.length != 1) {
             return null;
@@ -90,6 +96,6 @@ public class BugzillaTaskRepository extends BaseRepository {
 
     @Override
     public String extractId(String taskName) {
-        return taskName.split(":")[0];         // TODO: this should belong in a version specific impl...
+        return taskName.split("@")[0];
     }
 }

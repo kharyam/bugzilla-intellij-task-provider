@@ -1,5 +1,6 @@
 package org.bugzilla.tasks;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -9,9 +10,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.utils.URIUtils;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
@@ -45,7 +49,7 @@ public abstract class BugzillaV3HTTPCommunicator implements BugzillaCommunicator
         String fragment = uri.getFragment();
         return new URI(scheme, userinfo,  host,  port, newPath,  query, fragment);
     }
-    
+
     @Override
     public AuthToken login(String username, String password) throws IOException {
         /// index.cgi is the location for login
@@ -75,25 +79,37 @@ public abstract class BugzillaV3HTTPCommunicator implements BugzillaCommunicator
         }
         for(Cookie cookie: cookies) {
             if(cookie.getName().equals("Bugzilla_logincookie")) {
-                // TODO: need to handle expiration time
-                return new BugzillaCookieToken(cookie.getValue());
+                BugzillaCookieToken token = new BugzillaCookieToken();
+                token.setCookies(cookies.toArray(new Cookie[0]));
+                return token;
             }
         }
         return null;
     }
 
     @Override
-    public BugzillaTask[] getIssues(AuthToken token, BugzillaQuery query) throws IOException {
-        URI queryURI;
-        try {
-            queryURI = rebuildURI(uri, "/buglist.cgi");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException("Error while rebuilding URI: " , e);
+    public BugzillaTask[] getIssues(AuthToken token, BugzillaQuery query) throws IOException, URISyntaxException {
+
+        CookieStore cookieStore = new BasicCookieStore();
+        Cookie[] cookies = token.toCookies();
+        for(Cookie cookie: cookies) {
+            cookieStore.addCookie(cookie);
         }
+        BasicClientCookie column_cookie = new BasicClientCookie("COLUMNLIST", "bug_severity priority bug_id assigned_to bug_status version target_milestone short_desc assigned_to_realname reporter reporter_realname product component");
+        column_cookie.setPath("/");
+        if(cookies.length > 0) {
+            column_cookie.setExpiryDate(cookies[0].getExpiryDate());
+            column_cookie.setDomain(cookies[0].getDomain());
+        }
+        cookieStore.addCookie(column_cookie);
+        HttpContext localContext = new BasicHttpContext();
+        localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);        
         HttpClient httpclient = new DefaultHttpClient();
-        HttpGet httpget = new HttpGet(queryURI);
-        httpget.setParams(queryToParams(query));
-        HttpResponse response = httpclient.execute(httpget);
+        URI queryuri = URIUtils.createURI(uri.getScheme(), uri.getHost(), uri.getPort(), uri.getPath() + "/buglist.cgi",
+                URLEncodedUtils.format(queryToParams(query), "UTF-8"), null);
+        HttpGet httpget = new HttpGet(queryuri);
+
+        HttpResponse response = httpclient.execute(httpget, localContext);
         HttpEntity entity = response.getEntity();
         if (entity != null) {
             InputStream instream = entity.getContent();
@@ -102,7 +118,7 @@ public abstract class BugzillaV3HTTPCommunicator implements BugzillaCommunicator
         throw new IOException("Server returned no data");
     }
 
-    protected abstract HttpParams queryToParams(BugzillaQuery query);
+    protected abstract List<NameValuePair> queryToParams(BugzillaQuery query);
 
     protected abstract BugzillaTask[] process(InputStream stream) throws IOException;
     

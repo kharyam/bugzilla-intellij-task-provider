@@ -9,9 +9,12 @@ package org.bugzilla.tasks;
  */
 public class BugzillaQuery {
 
+    private String bugId;
     private String assignedTo;
-    private String status;
+    private String[] status;
     private String targetMilestone;
+    private String version;
+    private String summary;
 
 
     public String getAssignedTo() {
@@ -22,11 +25,11 @@ public class BugzillaQuery {
         this.assignedTo = assignedTo;
     }
 
-    public String getStatus() {
+    public String[] getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String[] status) {
         this.status = status;
     }
 
@@ -36,5 +39,29 @@ public class BugzillaQuery {
 
     public void setTargetMilestone(String targetMilestone) {
         this.targetMilestone = targetMilestone;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getBugId() {
+        return bugId;
+    }
+
+    public void setBugId(String bugId) {
+        this.bugId = bugId;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getSummary() {
+        return summary;
     }
 }
