@@ -1,4 +1,2 @@
 This is a small plugin that should allow you to view all of your bugs in bugzilla from within
 intelliJ and be able to do the whole switch/edit/commit thing from within intellj.
-
-Project is not ready for production use yet. 
