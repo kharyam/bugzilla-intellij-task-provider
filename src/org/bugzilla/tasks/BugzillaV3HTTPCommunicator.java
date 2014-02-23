@@ -47,8 +47,8 @@ public abstract class BugzillaV3HTTPCommunicator implements BugzillaCommunicator
         String userinfo = uri.getUserInfo();
         String query = uri.getQuery();
         String fragment = uri.getFragment();
-        String path=uri.getPath();
-        return new URI(scheme, userinfo,  host,  port, path+newPath,  query, fragment);
+        String path=uri.getPath() + newPath;
+        return new URI(scheme, userinfo,  host,  port, path,  query, fragment);
     }
 
     @Override
